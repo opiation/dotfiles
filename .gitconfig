@@ -1,0 +1,6 @@
+[core]
+	editor = code --wait
+
+[user]
+  name = Nicholas Gelinas
+  email = nick.gelinas@gmail.com
