@@ -84,6 +84,7 @@ ZSH_THEME="agnoster"
 plugins=(
   asdf
   git
+  yarn
 )
 
 source $ZSH/oh-my-zsh.sh
