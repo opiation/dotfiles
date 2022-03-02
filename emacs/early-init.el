@@ -12,6 +12,16 @@
 ;; The default is 800 kilobytes. The value is in bytes.
 (setq gc-cons-threshold (* 50 1024 1024))
 
+;; Increase bandwidth between processes.
+(setq read-process-output-max (* 1024 1024))
+
+(setq cursor-type 'bar
+      inhibit-splash-screen t
+      inhibit-startup-echo-area-message t
+      inhibit-startup-message t
+      inhibit-startup-screen t
+      visible-bell nil)
+
 (when (featurep 'native-compile)
   (defvar native-comp-async-report-warnings-errors)
   (setq native-comp-async-report-warnings-errors 'silent))
