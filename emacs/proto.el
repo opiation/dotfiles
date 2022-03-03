@@ -185,6 +185,7 @@
   (require 'corfu)
   (corfu-global-mode))
 (add-hook 'emacs-startup-hook #'ng/init-corfu)
+(global-set-key (kbd "C-SPC") #'completion-at-point)
 
 (straight-use-package 'rainbow-delimiters)
 (add-hook 'prog-mode-hook #'rainbow-delimiters-mode)
@@ -275,6 +276,15 @@
 (customize-set-variable 'visual-fill-column-fringes-outside-margins nil)
 
 (straight-use-package 'vterm)
+(defun ng/simplify-term-ui ()
+  "Adjust terminal buffers to be less noisy."
+  (setq line-spacing 0))
+(when (and (featurep 'vterm)
+	   (fboundp 'vterm-mode))
+  (add-hook 'vterm-mode #'ng/simplify-term-ui))
+(when (and (featurep 'term)
+	   (fboundp 'term-mode))
+  (add-hook 'term-mode #'ng/simplify-term-ui))
 
 ;; Inhibit various Emacs startup features
 ;; Note, these should be synchronous an execute before the end of this script
