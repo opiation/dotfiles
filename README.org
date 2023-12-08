@@ -245,7 +245,6 @@ Sometimes, we may need to use emacs in a terminal, such as remotely accessing ou
 
 A few items remain to be added to this 
 - [ ] Use emacs as editor
-- [ ] Add PGP key commit signing requirement
 
 #+BEGIN_SRC conf
 
@@ -257,12 +256,22 @@ A few items remain to be added to this
 
 #+BEGIN_SRC conf
 
+  [commit]
+    gpgSign = true
+
   [core]
     editor = code --wait
+
+  [init]
+    defaultBranch = main
+
+  [tag]
+    gpgSign = true
 
   [user]
     name = Nicholas Gelinas
     email = nick.gelinas@gmail.com
+    signingKey = DB506578
     
 #+END_SRC
 

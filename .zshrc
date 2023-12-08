@@ -19,9 +19,9 @@ export ZSH="/Users/ngelinas/.oh-my-zsh"
 # load a random theme each time oh-my-zsh is loaded, in which case,
 # to know which specific one was loaded, run: echo $RANDOM_THEME
 # See https://github.com/ohmyzsh/ohmyzsh/wiki/Themes
-ZSH_THEME="agnoster"
+ZSH_THEME="robbyrussell"
 
-# Set list of themes to pick from when loading at random
+# Set list of themes to pick from when loading at random 
 # Setting this variable when ZSH_THEME=random will cause zsh to load
 # a theme from this variable instead of looking in $ZSH/themes/
 # If set to an empty array, this variable will have no effect.
@@ -115,3 +115,8 @@ source $ZSH/oh-my-zsh.sh
 # alias zshconfig="mate ~/.zshrc"
 # alias ohmyzsh="mate ~/.oh-my-zsh"
 # alias emacs="~/Projects/oss/emacs-ng/src/emacs"
+
+# This is needed for signing commits with GPG
+export GPG_TTY=$(tty)
+
+eval "$(starship init zsh)"
