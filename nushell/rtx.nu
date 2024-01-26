@@ -29,11 +29,11 @@ def --wrapped rtx [command?: string, --help, ...rest: string] {
   } else if ($command == "activate") {
     $env.RTX_SHELL = "nu"
   } else if ($command in $commands) {
-    ^"/Users/nicholasgelinas/.cargo/bin/rtx" $command $rest
+    ^"/Users/nicholasgelinas/.cargo/bin/rtx" $command ...$rest
     | parse vars
     | update-env
   } else {
-    ^"/Users/nicholasgelinas/.cargo/bin/rtx" $command $rest
+    ^"/Users/nicholasgelinas/.cargo/bin/rtx" $command ...$rest
   }
 }
 
