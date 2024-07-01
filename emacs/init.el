@@ -1,4 +1,4 @@
-;;; opiation --- Summary
+;;; opiation --- Summary -*- lexical-binding: t -*-
 ;;;
 ;;; Commentary:
 ;;;
@@ -14,27 +14,38 @@
 ;; Package management with `straight.el'
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defvar bootstrap-version)
+(require 'package)
+(add-to-list 'package-archives '("melpa" . "https://melpa.org/packages/") t)
+;; Comment/uncomment this line to enable MELPA Stable if desired.
+;; See `package-archive-priorities` and `package-pinned-packages`.
+;; Most users will not need or want to do this.
+;; (add-to-list 'package-archives
+;;              '("melpa-stable" . "https://stable.melpa.org/packages/") t)
+(package-initialize t)
+(require 'use-package-ensure)
+
+(use-package use-package-ensure-system-package
+  :ensure t)
+
+;(defvar bootstrap-version)
 
 ;; Fetch `straight.el's bootstrap script
-(let ((bootstrap-file
-       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
-      (bootstrap-version 5))
-  (unless (file-exists-p bootstrap-file)
-    (with-current-buffer
-        (url-retrieve-synchronously
-         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-         'silent 'inhibit-cookies)
-      (goto-char (point-max))
-      (eval-print-last-sexp)))
-  (load bootstrap-file nil 'nomessage))
+;(let ((bootstrap-file
+;       (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+;      (bootstrap-version 5))
+;  (unless (file-exists-p bootstrap-file)
+;    (with-current-buffer
+;        (url-retrieve-synchronously
+;         "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+;         'silent 'inhibit-cookies)
+;      (goto-char (point-max))
+;      (eval-print-last-sexp)))
+;  (load bootstrap-file nil 'nomessage))
+;
+;(straight-use-package 'use-package)
 
-(straight-use-package 'use-package)
-
-(require 'straight)
-(setq straight-use-package-by-default t)
-
-
+;(require 'straight)
+;(setq straight-use-package-by-default t)
 
 ;;;;;;;;;;;;;;;;;;;;;;
 ;; Styling and display
@@ -78,24 +89,39 @@
 
   ;; Use Fira Code Retina as a default font
   (set-face-attribute 'default nil
-                      :font "Fira Code"
+                      :font "Iosevka Nerd Font Mono"
+		      ;:font "Ubuntu Mono"
                       :height opiation/default-font-height)
 
   ;; Use Fira Code Retina as a fixed-width font
   ;; This is useful in cases where mode override the default but rely on
   ;; fixed-width and variable-width settings
   (set-face-attribute 'fixed-pitch nil
-                      :family "Fira Code"
+                      :family "Iosevka Nerd Font Mono"
+		      ;:family "Fira Code"
+		      ;:family "Ubunto Mono"
                       :height 1.0)
 
   ;; Use Ubuntu as a variable-width font
   (set-face-attribute 'variable-pitch nil
-                      :family "Ubuntu"
+		      :family "Iosevka Nerd Font"
+                      ;:family "Ubuntu"
                       :height 1.1
                       :weight 'regular))
 (my/set-sane-defaults)
 
+(defun find-user-init-file ()
+  "Open your current Emacs configuration file."
+  (interactive)
+  (find-file user-init-file))
 
+(use-package emacs
+  :bind (("C-," . find-user-init-file)))
+
+(use-package emacs
+  ;; Add a little breathing room between lines for most full-height fonts.
+  :custom (line-spacing 0.1)
+  :if (display-graphic-p))
 
 ;; Consider only applying line spacing to programming modes as it may make
 ;; shells and other buffers look a little strange. Fancy `zsh' prompts for
@@ -113,8 +139,6 @@
   (scroll-bar-mode -1)
   (tool-bar-mode -1)
 
-  ;; Add a little breathing room between lines for most full-height fonts.
-  (setq-default line-spacing 0.2)
   (message "Configured UI options for the GUI interface"))
 
 
@@ -164,31 +188,39 @@
 
 
 
-(use-package async)
+(use-package async
+  :ensure t)
 
-(use-package diminish :demand)
+(use-package dash
+  :ensure t)
+
+(use-package diminish :demand
+  :ensure t)
 
 ;; In order to acquire and install these fonts on your local system, you must
 ;; run the following:
 ;;
-;; M-x all-the-icons-install-fonts
-(use-package all-the-icons
+;; M-x nerd-icons-install-fonts
+(use-package nerd-icons
+  :ensure t
   :init
-  ;; Acquire and install fonts from `all-the-icons' onto your local system if
+  ;; Acquire and install fonts from `nerd-icons' onto your local system if
   ;; they have not already been installed, and only while in GUI mode.
   (when (and (display-graphic-p)
-	     (not (member "all-the-icons" (font-family-list))))
-    (all-the-icons-install-fonts t)))
+	     (not (member "nerd-icons" (font-family-list))))
+    (nerd-icons-install-fonts t)))
 
-(use-package page-break-lines)
+(use-package page-break-lines
+  :ensure t)
 
 (use-package doom-modeline
-  :after (all-the-icons)
+  :after (dash nerd-icons)
 
   :custom
-  (doom-modeline-height 30)
+  (doom-modeline-height 40)
   (doom-modeline-buffer-encoding nil)
 
+  :ensure t
   :functions doom-modeline-mode
 
   :init
@@ -199,7 +231,8 @@
   :after (doom-modeline)
 
   :config
-  (load-theme 'doom-gruvbox t) ; Dark theme
+  (load-theme 'doom-gruvbox t)
+  ;;(load-theme 'doom-ayu-dark t) ; Dark theme
   ;;(load-theme 'doom-one-light t) ; Light theme
   (doom-themes-visual-bell-config)
 
@@ -209,59 +242,19 @@
   (doom-themes-enable-italic t "Allow doom themes to use italic font variants.")
 
   :defines doom-themes-enable-bold doom-themes-enable-italic
-  :functions doom-themes-visual-bell-config
-  )
+  :ensure t
+  :functions doom-themes-visual-bell-config)
+
+(use-package spacious-padding
+  :config (spacious-padding-mode 1)
+  :demand
+  :ensure t)
 
 
 
 ;;;;;;;;;;;;;;;;;;;;;
 ;; Project management
 ;;;;;;;;;;;;;;;;;;;;;
-
-(use-package projectile
-  :bind
-  ("C-S-f" . projectile-ripgrep)
-
-  :bind-keymap
-  ("C-c p" . projectile-command-map)
-
-  :config
-  (projectile-mode)
-
-  :custom
-  (projectile-completion-system 'ivy)
-
-  :diminish projectile-mode
-
-  :init
-  ;; NOTE: Set this to the directory where you keep your Git repos.
-  (when (file-directory-p "~/Projects")
-    (setq projectile-project-search-path '("~/Projects")))
-  (setq projectile-switch-project-action #'projectile-dired))
-
-(use-package counsel-projectile
-  :after (counsel projectile)
-  :config (counsel-projectile-mode)
-  :functions counsel-projectile-mode)
-
-(use-package treemacs
-  :after (doom-themes)
-  :bind (:map global-map
-	      ("C-b" . treemacs)
-	      ("<f8>" . treemacs))
-  :config
-  (doom-themes-treemacs-config)
-
-  :functions doom-themes-treemacs-config)
-
-(use-package treemacs-all-the-icons
-  :after (all-the-icons treemacs))
-
-(use-package treemacs-magit
-  :after (magit treemacs))
-
-(use-package treemacs-projectile
-  :after (projectile treemacs))
 
 
 
@@ -278,7 +271,7 @@
 (use-package drag-stuff
   :config
   (drag-stuff-define-keys)
-
+  :ensure t
   :functions drag-stuff-define-keys
 
   :hook
@@ -293,90 +286,12 @@
   (which-key-side-window-max-height 0.6)
 
   :diminish which-key-mode
+  :ensure t
   :functions which-key-mode)
 
-(use-package counsel
-  :bind
-  (("C-M-j" . #'counsel-switch-buffer)
-   :map minibuffer-local-map
-   ("C-r" . #'counsel-minibuffer-history))
-
-  :config
-  (counsel-mode 1)
-  
-  ;; :custom
-  ;; (counsel-linux-app-format-function #'counsel-linux-app-format-function-name-only))
-
-  :functions counsel-minibuffer-history counsel-mode counsel-switch-buffer)
-
-(use-package general
-  :after (counsel which-key)
-
-  :config
-  (general-create-definer my/leader-keys
-    ;; :keymaps '(normal insert visual emacs) ; used for evil-mode
-    :prefix "C-SPC"
-    ;; :global-prefix "C-SPC")
-    )
-
-  (my/leader-keys
-    "t" '(counsel-load-theme :which-key "Choose theme"))
-
-  :functions general-create-definer)
-
-(use-package hydra
-  :after (counsel general which-key)
-  
-  :config
-  (defhydra hydra-text-scale ()
-    "Scale text"
-    ("<up>" text-scale-increase "Up")
-    ("<down>" text-scale-decrease "Down")
-    ("x" nil "Exit" :exit t))
-  
-  (my/leader-keys
-    "s" '(hydra-text-scale/body :which-key "Scale text"))
-
-  (defhydra hydra-help (global-map "s-/")
-    "
-
-Help ?
-
-The purpose of this help screen is to provide a number of convenient keyboard
-shortcuts to help you!
-
-Use _<esc>_ or _s-/_ anytime to exit this menu.
-
-_b_ : Switch buffer
-
-"
-    ("<esc>" nil nil :exit t)
-    ("s-/" nil nil :exit t)
-    ("b" counsel-switch-buffer nil :exit t))
-
-  (global-set-key (kbd "s-/") #'hydra-help/body)
-  (my/leader-keys
-    "?" '(hydra-help/body :which-key "Help ?"))
-
-  :functions hydra-show-hint)
-
-(use-package hydra-posframe
-  :after (hydra)
-
-  :config (hydra-posframe-mode 1)
-  
+(use-package vc-hooks
   :custom
-  (hydra-posframe-parameters '((alpha . 90)
-			       (left-fringe . 24)
-			       (right-fringe . 24))
-			     "Adjust look and feel of `hydra' popups.")
-  
-  :straight (:host github
-              :repo "Ladicle/hydra-posframe"
-              :type git))
-
-(use-package command-log-mode
-  :commands command-log-mode)
+  (vc-follow-symlinks t))
 
 
 
@@ -384,66 +299,53 @@ _b_ : Switch buffer
 ;; Search and autocompletion
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-
-(use-package ivy
-  :bind
-  (("C-f" . swiper)
-   :map ivy-minibuffer-map
-   ("TAB" . ivy-alt-done)
-   ("C-l" . ivy-alt-done)
-   ("C-j" . ivy-next-line)
-   ("C-k" . ivy-previous-line)
-   :map ivy-switch-buffer-map
-   ("C-k" . ivy-previous-line)
-   ("C-l" . ivy-done)
-   ("C-d" . ivy-switch-buffer-kill)
-   :map ivy-reverse-i-search-map
-   ("C-k" . ivy-previous-line)
-   ("C-d" . ivy-reverse-i-search-kill))
-
-  :config
-  (ivy-mode 1)
-
+(use-package consult
+  :after (xref)
+  :bind (
+         ("C-x b" . consult-buffer)
+         ("C-p" . consult-project-buffer)
+         ("C-f" . consult-line)
+         ("C-S-f" . consult-ripgrep))
   :custom
-  (ivy-count-format "(%d/%d) ")
-  (ivy-height 40 "Count of suggestions in the Ivy minibuffer.")
-  (ivy-use-virtual-buffers t)
+  (xref-show-xrefs-function #'consult-xref)
+  (xref-show-definitions-function #'consult-xref)
+  :ensure t)
 
-  :defines ivy-minibuffer-map ivy-reverse-i-search-map ivy-switch-buffer-map
-  :diminish
-  :functions ivy-mode)
-
-(use-package ivy-rich
-  :after (ivy)
-
-  :config
-  (ivy-rich-mode 1)
-  
-  :functions ivy-rich-mode)
-
-(use-package ivy-prescient
-  :after (counsel ivy)
-
-  :config
-  ;; Uncomment the following line to have sorting remembered across sessions!
-  ;(prescient-persist-mode 1)
-  (ivy-prescient-mode 1)
-
+(use-package corfu
+  :bind (
+         ("C-SPC" . completion-at-point))
   :custom
-  (ivy-prescient-enable-filtering nil)
+  (corfu-auto t)
+  (corfu-auto-delay 0.1)
+  (corfu-popupinfo-delay '(1.0 . 0.6))
+  :ensure t
+  :init (global-corfu-mode))
 
-  :functions ivy-prescient-mode)
+;; Enable rich annotations using the Marginalia package
+(use-package marginalia
+  ;; Bind `marginalia-cycle' locally in the minibuffer.  To make the binding
+  ;; available in the *Completions* buffer, add it to the
+  ;; `completion-list-mode-map'.
+  :bind (:map minibuffer-local-map
+         ("M-A" . marginalia-cycle))
 
-(use-package helpful
-  :bind
-  ([remap describe-function] . counsel-describe-function)
-  ([remap describe-command] . helpful-command)
-  ([remap describe-variable] . counsel-describe-variable)
-  ([remap describe-key] . helpful-key)
+  :ensure t
+  :init
+  ;; Marginalia must be activated in the :init section of use-package such that
+  ;; the mode gets enabled right away. Note that this forces loading the
+  ;; package.
+  (marginalia-mode))
 
-  :custom
-  (counsel-describe-function-function #'helpful-callable)
-  (counsel-describe-variable-function #'helpful-variable))
+(use-package orderless
+  :custom (completion-styles '(orderless basic))
+  :ensure t)
+
+(use-package vertico
+  :ensure t
+  :init (vertico-mode)
+  :vc (:lisp-dir "extensions/"
+       :rev :newest
+       :url "https://github.com/minad/vertico"))
 
 
 
@@ -508,6 +410,7 @@ _b_ : Switch buffer
 
 (use-package visual-fill-column
   :defines visual-fill-column-center-text visual-fill-column-width
+  :ensure t
   :functions visual-fill-column-mode)
 
 (defun my/org-mode-setup ()
@@ -536,25 +439,28 @@ _b_ : Switch buffer
   (org-preview-latex-default-process 'dvisvgm "Specify LaTeX drawing engine.")
   (org-support-shift-select t "Allow using SHIFT to select text in `org-mode'.")
 
+  :ensure t
   :functions org-indent-mode
   :hook
   (org-mode . my/org-mode-setup)
-  
-  :straight
-  (:type git :repo "https://code.orgmode.org/bzg/org-mode.git"))
+
+  :vc (:rev :newest
+       :url "https://code.orgmode.org/bzg/org-mode"))
 
 (use-package ob-deno
   :after (org ob-typescript)
   :config
   (add-to-list 'org-babel-load-languages '(deno . t))
   (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
-  (add-to-list 'org-src-lang-modes '("deno" . typescript)))
+  (add-to-list 'org-src-lang-modes '("deno" . typescript))
+  :ensure t)
 
 (use-package ob-typescript
   :after (org)
   :config
   (add-to-list 'org-babel-load-languages '(typescript . t))
   (org-babel-do-load-languages 'org-babel-load-languages org-babel-load-languages)
+  :ensure t
 
   :init
   (require 'ob-js)
@@ -566,13 +472,15 @@ _b_ : Switch buffer
 
   :custom
   (org-bullets-bullet-list '("◉" "○" "●" "○" "●" "○" "●"))
+  :ensure t
 
   :hook
   (org-mode . org-bullets-mode))
 
 (use-package org-tree-slide
   :custom
-  (org-image-actual-width nil))
+  (org-image-actual-width nil)
+  :ensure t)
 
 
 
@@ -580,18 +488,21 @@ _b_ : Switch buffer
 ;; Programming language support
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(use-package dash
+  :ensure t)
+
 (use-package evil-nerd-commenter
-  :bind ("M-/" . evilnc-comment-or-uncomment-lines))
+  :bind ("M-/" . evilnc-comment-or-uncomment-lines)
+  :ensure t)
 
 ;; Install rainbow delimiters to make lisp a little more bearable
 (use-package rainbow-delimiters
-  :hook
-  (emacs-lisp-mode . rainbow-delimiters-mode))
+  :ensure t
+  :hook (emacs-lisp-mode . rainbow-delimiters-mode))
 
 (use-package flycheck
-  :config
-  (global-flycheck-mode)
-
+  :config (global-flycheck-mode)
+  :ensure t
   :functions global-flycheck-mode)
 
 (defun opiation/lsp-mode-setup ()
@@ -599,6 +510,16 @@ _b_ : Switch buffer
   
   (lsp-enable-which-key-integration)
   (lsp-headerline-breadcrumb-mode))
+
+(use-package eglot)
+
+(use-package eldoc
+  :custom
+  (eldoc-idle-delay 0.05))
+
+(use-package eldoc-box
+  :ensure t
+  :hook (eglot-managed-mode . eldoc-box-hover-mode))
 
 ;;
 ;; You may need to install requiring language servers for this to work
@@ -611,10 +532,9 @@ _b_ : Switch buffer
   (lsp-keymap-prefix "C-c l" "Specify the key binding for `lsp-mode' key map.")
   
   :defines lsp-headerline-breadcrumb-segments lsp-keymap-prefix lsp-mode-map
+  :ensure t
   :hook
-  (
-   ((elixir-mode javascript-mode js-mode typescript-mode) . lsp-deferred)
-   (lsp-mode . opiation/lsp-mode-setup))
+  (lsp-mode . opiation/lsp-mode-setup)
 
   :functions lsp-enable-which-key-integration lsp-headerline-breadcrumb-mode)
 
@@ -623,74 +543,102 @@ _b_ : Switch buffer
   :commands lsp-ui-mode
   :config
   (lsp-ui-sideline-mode -1)
-  
-  :custom
-  (lsp-ui-doc-position 'top "Show the hover over doc UI in the top right.")
-  (lsp-ui-doc-max-height 20 "Increase the max height of the doc UI.")
 
-  :functions lsp-ui-sideline-mode
-  
-  ;; :hook
-  ;;(lsp-mode . lsp-ui-mode))
+  :ensure t
+  :functions lsp-ui-sideline-mode)
+
+(defun reduce-font-height (frame)
+  "Reduce the default font height of the given FRAME."
+  (set-face-attribute 'default frame :height 0.6))
+
+(use-package lsp-ui-doc
+  :after (lsp-ui)
+  :custom
+  (lsp-ui-doc-delay 0.1 "Just a bit snappier")
+  (lsp-ui-doc-header t "Show a header above the symbol description")
+  (lsp-ui-doc-max-height 20 "Increase the max height of the doc UI.")
+  (lsp-ui-doc-position 'top "Show the hover over doc UI in the top right.")
+  (lsp-ui-doc-show-with-cursor t)
+  (lsp-ui-doc-text-scale-level -2)
+
+  :init
+  ;(progn
+  ;  (add-hook 'lsp-ui-doc-frame-hook #'reduce-font-height))
   )
 
-(use-package lsp-treemacs
-  :after (lsp treemacs)
-  :commands lsp-treemacs-errors-list)
-
-(use-package lsp-ivy
-  :after (ivy lsp)
-  :commands lsp-ivy-workspace-symbol)
-
-(use-package company
-  :after (lsp)
-
-  :bind
-  (:map company-active-map
-	("<tab>" . company-complete-selection))
-  (:map lsp-mode-map
-	("<tab>" . company-indent-or-complete-common))
-
+(use-package simple
   :custom
-  (company-minimum-prefix-length 1)
-  (company-idle-delay 0.0)
+  (indent-tabs-mode nil))
 
-  :defines company-active-map
-
-  :hook
-  (lsp-mode . company-mode))
-
-;; `company-box' PR to address `dash-functional' deprecation
-;; https://github.com/sebastiencs/company-box/pull/152
-(use-package company-box
-  :after (company)
-
-  :hook
-  (company-mode . company-box-mode))
-
-;; TODO: Automatically start mode using `:mode' parameter.
-(use-package js2-mode
+(use-package js
+  :after (treesit)
   :config
-  (setq-default indent-tabs-mode nil
-		js-indent-level 2)
+  (unless (treesit-language-available-p 'javascript)
+    (treesit-install-language-grammar 'javascript))
+  :custom
+  (js-indent-level 2)
+  :hook (js-ts-mode . eglot-ensure)
+  :mode (("\\.js$" . js-ts-mode)))
 
-  :hook (js2-mode . lsp-deferred)
-  
-  :mode "\\.jsx?$")
-
-(use-package typescript-mode
+(use-package typescript-ts-mode
+  :after (treesit)
   :config
-  (setq-default indent-tabs-mode nil
-		typescript-indent-level 2)
+  (progn
+    (unless (treesit-language-available-p 'typescript)
+      (treesit-install-language-grammar 'typescript))
+    (unless (treesit-language-available-p 'tsx)
+      (treesit-install-language-grammar 'tsx)))
 
   :hook
-  (typescript-mode . lsp-deferred)
+  ((typescript-ts-mode tsx-to-mode) . eglot-ensure)
 
-  :mode "\\.tsx?$")
+  :mode (("\\.ts$" . typescript-ts-mode)
+         ("\\.tsx$" . tsx-ts-mode)))
 
 (use-package rust-mode
-  :hook
-  (rust-mode . lsp-deferred))
+  :ensure t
+  :hook (rust-mode . eglot-ensure))
+
+(use-package treesit
+  :custom
+  (treesit-language-source-alist '((bash "https://github.com/tree-sitter/tree-sitter-bash")
+                                   (c "https://github.com/tree-sitter/tree-sitter-c")
+                                   (cmake "https://github.com/uyha/tree-sitter-cmake")
+                                   (common-lisp "https://github.com/theHamsta/tree-sitter-commonlisp")
+                                   (cpp "https://github.com/tree-sitter/tree-sitter-cpp")
+                                   (csharp "https://github.com/tree-sitter/tree-sitter-c-sharp")
+                                   (css "https://github.com/tree-sitter/tree-sitter-css")
+                                   (elisp "https://github.com/Wilfred/tree-sitter-elisp")
+                                   (elixir "https://github.com/elixir-lang/tree-sitter-elixir")
+                                   (go "https://github.com/tree-sitter/tree-sitter-go")
+                                   (heex "https://github.com/phoenixframework/tree-sitter-heex")
+                                   (html "https://github.com/tree-sitter/tree-sitter-html")
+                                   (javascript "https://github.com/tree-sitter/tree-sitter-javascript" "master" "src")
+                                   (js . ("https://github.com/tree-sitter/tree-sitter-javascript" "master" "src"))
+                                   (jsdoc "https://github.com/tree-sitter/tree-sitter-jsdoc")
+                                   (json "https://github.com/tree-sitter/tree-sitter-json")
+                                   (make "https://github.com/alemuller/tree-sitter-make")
+                                   (markdown "https://github.com/ikatyang/tree-sitter-markdown")
+                                   (python "https://github.com/tree-sitter/tree-sitter-python")
+                                   (rust "https://github.com/tree-sitter/tree-sitter-rust")
+                                   (toml "https://github.com/tree-sitter/tree-sitter-toml")
+                                   (tsx "https://github.com/tree-sitter/tree-sitter-typescript" "master" "tsx/src")
+                                   (typescript "https://github.com/tree-sitter/tree-sitter-typescript" "master" "typescript/src")
+                                   (yaml "https://github.com/ikatyang/tree-sitter-yaml"))))
+
+(use-package elixir-ts-mode
+  :config
+  (progn
+    (unless (treesit-language-available-p 'elixir)
+      (treesit-install-language-grammar 'elixir))
+    (unless (treesit-language-available-p 'heex)
+      (treesit-install-language-grammar 'heex)))
+  
+  :hook ((elixir-mode . elixir-ts-mode)
+         (elixir-ts-mode . eglot-ensure))
+  :init
+  (add-to-list 'eglot-server-programs '(elixir-ts-mode "~/.emacs.d/elixir-ls/release/language_server.sh"))
+  :mode ("\\.exs?$"))
 
 (defun my/center-like-article ()
   "Configure buffer like an 80-character centered article."
@@ -704,20 +652,20 @@ _b_ : Switch buffer
   :after (visual-fill-column)
   :custom
   (markdown-fontify-code-blocks-natively t)
-
+  :ensure t
   :hook
   (markdown-mode . my/center-like-article))
 
 (use-package lsp-java
+  :ensure t
   :hook
-  (java-mode . lsp-deferred))
+  (java-mode . eglot-ensure))
 
 (use-package editorconfig
-  :config
-  (editorconfig-mode 1)
-
+  :config (editorconfig-mode 1)
+  :ensure t
   :functions editorconfig-mode)
-
+  
 
 
 ;;;;;;;;;;;;;;;;;;
@@ -725,9 +673,11 @@ _b_ : Switch buffer
 ;;;;;;;;;;;;;;;;;;
 
 (use-package magit
+  :after (dash rainbow-delimiters)
   :custom
   (magit-display-buffer-function
-    #'magit-display-buffer-same-window-except-diff-v1))
+   #'magit-display-buffer-same-window-except-diff-v1)
+  :ensure t)
 
 ;; For Github integration which requires setting up a GitHub token before use
 ;; (use-package forge)
@@ -756,15 +706,13 @@ _b_ : Switch buffer
   (eshell-visual-commands '("htop" "less" "lynx" "more" "tmux" "top" "zsh"))
 
   :hook
-  (eshell-mode . my/remove-fringes)
-  
-  :straight (:type built-in))
+  (eshell-mode . my/remove-fringes))
 
 (use-package eshell-git-prompt
   :after (eshell)
   :config
   (eshell-git-prompt-use-theme 'powerline)
-  
+  :ensure t
   :functions eshell-git-prompt-use-theme)
 
 (use-package term
@@ -781,7 +729,7 @@ _b_ : Switch buffer
 
 (use-package eterm-256color
   :after (eshell term)
-
+  :ensure t
   :hook
   (eshell-mode . eterm-256color-mode)
   (term-mode . eterm-256color-mode))
@@ -795,11 +743,12 @@ _b_ : Switch buffer
   ;; expects shell configs on the remote target (`~/.bashrc', `~/.zshrc') to
   ;; return early if detecting this env variable.
   ((tramp-terminal-type "tramp" "Specify a known terminal type for SSH."))
-  
-  :straight (:type built-in))
+  :ensure t)
 
 (use-package vterm
   :commands vterm
+  :ensure t
+  :ensure-system-package libtool-bin
   :hook
   (vterm-mode . my/remove-fringes))
 
@@ -829,7 +778,7 @@ _b_ : Switch buffer
     (select-window window)))
 
 (use-package popper
-  :bind (("C-`" . popper-toggle-latest))
+  :bind (("C-`" . popper-toggle))
   :commands (ansi-term eshell term vterm)
   :custom
   (popper-display-function #'my/popper/select-terminal-popup)
@@ -841,27 +790,11 @@ _b_ : Switch buffer
 buffers as popups.")
 
   :defines popper-reference-buffers
+  :ensure t
   :functions popper-mode
 
   :init
   (popper-mode 1))
-
-(defun my/mini-frame-parameters ()
-  "Return `mini-frame' parameters."
-  '((alpha . 90)
-    (height . 1)
-    (left . 0.5)
-    (left-fringe . 8)
-    (right-fringe . 8)
-    (top . 0.2)
-    (width . 0.8)))
-
-(use-package mini-frame
-  :custom
-  (mini-frame-color-shift-step 16 "Distinguish the frame slightly.")
-  (mini-frame-show-parameters #'my/mini-frame-parameters)
-  
-  :hook (after-init . mini-frame-mode))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;
 ;; File system navigation
@@ -883,23 +816,64 @@ buffers as popups.")
   :functions dired-hide-details-mode
 
   :hook
-  (dired-mode . my/dired/hide-permission-details)
-
-  :straight (:type built-in))
+  (dired-mode . my/dired/hide-permission-details))
 
 (use-package dired-single
-  :after (dired))
+  :after (dired)
+  :ensure t)
 
 (use-package dired-subtree
-  :after (dired)
+  :after (dash dired)
   :bind (:map dired-mode-map
               ("TAB" . dired-subtree-toggle)))
 
-(use-package all-the-icons-dired
-  :after (all-the-icons dired)
-
+(use-package nerd-icons-dired
+  :after (nerd-icons dired)
+  :ensure t
   :hook
-  (dired-mode . all-the-icons-dired-mode))
+  (dired-mode . nerd-icons-dired-mode))
 
 (provide 'init)
 ;;; init.el ends here
+(custom-set-variables
+ ;; custom-set-variables was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(corfu-popupinfo-delay (1.0 . 0.6) nil nil "Customized with use-package corfu")
+ '(custom-safe-themes
+   '("88f7ee5594021c60a4a6a1c275614103de8c1435d6d08cc58882f920e0cec65e"
+     "9f297216c88ca3f47e5f10f8bd884ab24ac5bc9d884f0f23589b0a46a608fe14"
+     default))
+ '(package-selected-packages
+   '(async consult corfu diminish dired-single doom-modeline doom-themes
+           drag-stuff editorconfig eldoc-box eshell-git-prompt
+           eterm-256color evil-nerd-commenter flycheck lsp-java lsp-ui
+           lsp-ui-doc marginalia nerd-icons-dired ob-deno
+           ob-typescript orderless org-bullets org-tree-slide
+           page-break-lines popper rainbow-delimiters rust-mode
+           spacious-padding use-package-ensure-system-package vertico
+           visual-fill-column vterm which-key)))
+(custom-set-faces
+ ;; custom-set-faces was added by Custom.
+ ;; If you edit it by hand, you could mess it up, so be careful.
+ ;; Your init file should contain only one such instance.
+ ;; If there is more than one, they won't work right.
+ '(fringe ((t :background "#282828")))
+ '(header-line ((t :box (:line-width 4 :color "#37302f" :style nil))))
+ '(header-line-highlight ((t :box (:color "#ebdbb2"))))
+ '(keycast-key ((t)))
+ '(line-number ((t :background "#282828")))
+ '(mode-line ((t :box (:line-width 6 :color "#37302f" :style nil))))
+ '(mode-line-active ((t :box (:line-width 6 :color "#37302f" :style nil))))
+ '(mode-line-highlight ((t :box (:color "#ebdbb2"))))
+ '(mode-line-inactive ((t :box (:line-width 6 :color "#282828" :style nil))))
+ '(tab-bar-tab ((t :box (:line-width 4 :color "#282828" :style nil))))
+ '(tab-bar-tab-inactive ((t :box (:line-width 4 :color "#1d2021" :style nil))))
+ '(tab-line-tab ((t)))
+ '(tab-line-tab-active ((t)))
+ '(tab-line-tab-inactive ((t)))
+ '(vertical-border ((t :background "#282828" :foreground "#282828")))
+ '(window-divider ((t (:background "#282828" :foreground "#282828"))))
+ '(window-divider-first-pixel ((t (:background "#282828" :foreground "#282828"))))
+ '(window-divider-last-pixel ((t (:background "#282828" :foreground "#282828")))))

@@ -1,11 +1,8 @@
-;;; early-init --- Early initialization for Emacs before package loading
+;;; early-init --- Early initialization for Emacs before package loading -*- lexical-binding: t -*-
 
 ;;; Commentary:
 
 ;;; Code:
-
-;; Disable `package.el' at start up as we intend to use `straight.el' instead.
-(setq package-enable-at-startup nil)
 
 ;; Increase the garbage collection threshold before initialization so that emacs
 ;; does not slow down repeatedly on startup to garbage collect.
