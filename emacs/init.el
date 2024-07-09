@@ -162,7 +162,10 @@
     (my/configure-graphic-display)
   (my/configure-tty-display))
 
-
+(use-package xclip
+  :config (xclip-mode 1)
+  :ensure t
+  :if (not (display-graphic-p)))
 
 (defun my/configure-file-management ()
   "Configure file management preference in Emacs."
