@@ -205,13 +205,7 @@
 ;;
 ;; M-x nerd-icons-install-fonts
 (use-package nerd-icons
-  :ensure t
-  :init
-  ;; Acquire and install fonts from `nerd-icons' onto your local system if
-  ;; they have not already been installed, and only while in GUI mode.
-  (when (and (display-graphic-p)
-	     (not (member "nerd-icons" (font-family-list))))
-    (nerd-icons-install-fonts t)))
+  :ensure t)
 
 (use-package page-break-lines
   :ensure t)
@@ -859,7 +853,7 @@ buffers as popups.")
            ob-typescript orderless org-bullets org-tree-slide
            page-break-lines popper rainbow-delimiters rust-mode
            spacious-padding use-package-ensure-system-package vertico
-           visual-fill-column vterm which-key)))
+           visual-fill-column vterm which-key xclip)))
 (custom-set-faces
  ;; custom-set-faces was added by Custom.
  ;; If you edit it by hand, you could mess it up, so be careful.
