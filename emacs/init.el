@@ -640,6 +640,9 @@
   (add-to-list 'eglot-server-programs '(elixir-ts-mode "~/.emacs.d/elixir-ls/release/language_server.sh"))
   :mode ("\\.exs?$"))
 
+(use-package yaml-ts-mode
+  :mode ("\\.ya?ml$"))
+
 (defun my/center-like-article ()
   "Configure buffer like an 80-character centered article."
   
