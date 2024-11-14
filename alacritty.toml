@@ -1,0 +1,16 @@
+[env]
+TERM = "xterm-256color"
+
+[font]
+normal.family = "Iosevka Nerd Font"
+size = 14.0
+offset.y = 4
+
+[general]
+import = ["~/.config/alacritty/themes/themes/ayu_dark.toml"]
+
+[window]
+decorations = "buttonless"
+opacity = 0.8
+padding.x = 8
+padding.y = 8
