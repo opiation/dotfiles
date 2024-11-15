@@ -1,0 +1,41 @@
+exit
+config nu --default
+config nu --default | rg shell_integration
+config nu --default | rg shell_integration -a 5
+config nu --default | rg shell_integration -a5
+config nu --default | rg shell_integration -a
+config nu --default | rg shell_integration -b5
+config nu --default | rg shell_integration -b 5
+config nu --default | rg shell_integration -A 5
+config nu --default | rg shell_integration -A 10
+config nu --default | rg shell_integration -A 20
+config nu --default | rg shell_integration -A 40
+exit
+l
+clear
+l
+clear
+l
+clear
+l
+cd Projects/
+l
+cd opiation/dotfiles/
+l
+git status
+git add alacritty.toml
+git status
+emacs -nw
+nvim
+clear
+git status
+git rm alacritty.yml
+git status
+git cz
+exit
+git status
+git push
+git diff 
+git status
+git add nushell/
+git status
